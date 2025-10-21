@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* FSSienaTrial Font Family - Clean Setup */
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-ExtraLight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-ExtraLightItalic.otf') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-LightItalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-ThinItalic.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'FSSienaTrial';
+  src: url('/src/fonts/FSSienaTrial-BoldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    background-color: #F7F0E9;
+    font-family: 'FSSienaTrial', sans-serif;
+}
+
+ul,li{
+    list-style: none;
+}
+
+
+#footer_logo{
+    background-color:transparent;
+    padding: 0;
+    margin: 0;
+}
+
+#warning{
+    color: #756750;
+}
+.vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+  .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .slide.active {
+    position: relative;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .slide-image {
+    opacity: 0;
+  }
+
+  .slide.active .slide-image {
+    animation: fadeInImage 0.7s ease-in-out forwards;
+  }
+
+  @keyframes fadeInImage {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
