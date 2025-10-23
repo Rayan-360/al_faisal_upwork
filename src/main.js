@@ -23,49 +23,51 @@ mobileOverlay.addEventListener("click", () => {
 });
 
 
-//video
-const playButton = document.getElementById('play-button');
-const videoThumbnail = document.getElementById('video-thumbnail');
-const videoContainer = document.getElementById('video-container');
-const videoPlayer = document.getElementById('video-player');
-const closeVideo = document.getElementById('close-video');
-
-playButton.addEventListener('click', () => {
-  // Fade out thumbnail
-  videoThumbnail.style.opacity = '0';
+(function initHeroVideo() {
+  const heroVideo = document.getElementById('hero-video');
+  const videoPoster = document.getElementById('video-poster');
+  const playButton = document.getElementById('play-button');
   
-  setTimeout(() => {
-    videoThumbnail.classList.add('hidden');
-    videoContainer.classList.remove('hidden');
+  if (!heroVideo || !videoPoster || !playButton) return;
+
+  heroVideo.muted = true;
+  heroVideo.playsInline = true;
+
+  let hasAutoPlayed = false;
+
+  // Function to play video with fade-in effect
+  function playVideoWithFade() {
+    videoPoster.style.opacity = '0';
+    playButton.style.opacity = '0';
+    heroVideo.style.opacity = '1';
     
-    // Fade in video with animation
-    videoContainer.style.opacity = '0';
-    setTimeout(() => {
-      videoContainer.style.transition = 'opacity 0.5s ease-in-out';
-      videoContainer.style.opacity = '1';
-      videoPlayer.play();
-    }, 50);
-  }, 500);
-});
+    heroVideo.currentTime = 0; // Reset to start
+    heroVideo.play().catch(() => {});
+  }
 
-closeVideo.addEventListener('click', () => {
-  videoPlayer.pause();
-  videoPlayer.currentTime = 0;
-  
-  // Fade out video
-  videoContainer.style.opacity = '0';
-  
+  // Function to show poster after video ends
+  function showPoster() {
+    heroVideo.style.opacity = '0';
+    videoPoster.style.opacity = '1';
+    playButton.style.opacity = '1';
+  }
+
+  // Auto-play after 2-3 seconds on page load
   setTimeout(() => {
-    videoContainer.classList.add('hidden');
-    videoThumbnail.classList.remove('hidden');
-    videoThumbnail.style.opacity = '1';
-  }, 500);
-});
+    if (!hasAutoPlayed) {
+      hasAutoPlayed = true;
+      playVideoWithFade();
+    }
+  }, 2500); // 2.5 seconds delay
 
-// Close video when it ends
-videoPlayer.addEventListener('ended', () => {
-  closeVideo.click();
-});
+  // When video ends, show poster again
+  heroVideo.addEventListener('ended', showPoster);
+
+  // Click play button to replay video
+  playButton.addEventListener('click', () => {
+    playVideoWithFade();
+  });
+})();
 
 
 //news
@@ -212,11 +214,10 @@ const businessVerticals = [
   },
 ];
 
-
 let activeIndex = 0;
 let autoSlideInterval;
 
-// DOM elements
+// DOM elements - Desktop
 const bgImage = document.getElementById("bg-image");
 const mainHeading = document.getElementById("main-heading");
 const mainDescription = document.getElementById("main-description");
@@ -224,7 +225,14 @@ const activeVerticalText = document.getElementById("active-vertical-text");
 const activeIndicator = document.getElementById("active-indicator");
 const verticalListContainer = document.getElementById("vertical-list-container");
 
-// Render inactive verticals
+// DOM elements - Mobile
+const mobileActiveText = document.getElementById("mobile-active-text");
+const mobileActiveIndicator = document.getElementById("mobile-active-indicator");
+const mobileMainHeading = document.getElementById("mobile-main-heading");
+const mobileMainDescription = document.getElementById("mobile-main-description");
+const mobileListContainer = document.getElementById("mobile-list-container");
+
+// Render inactive verticals for desktop
 function renderInactiveVerticals() {
   verticalListContainer.innerHTML = "";
 
@@ -258,7 +266,7 @@ function renderInactiveVerticals() {
 
       // Click handler with animation
       box.addEventListener("click", () => {
-        clearInterval(autoSlideInterval); // reset auto-slide
+        clearInterval(autoSlideInterval);
         animateVerticalSlide(index);
         startAutoSlide();
       });
@@ -269,27 +277,99 @@ function renderInactiveVerticals() {
   });
 }
 
-// Animate vertical change: slide out left, slide in from right
-function animateVerticalSlide(nextIndex) {
-  // Slide current image & text left and fade partially
-  gsap.to(bgImage, { duration: 0.8, x: -100, opacity: 0.4, ease: "power1.inOut" });
-  gsap.to(mainHeading, { duration: 0.6, x: -30, opacity: 0.5, ease: "power1.inOut" });
-  gsap.to(mainDescription, { duration: 0.6, x: -30, opacity: 0.5, ease: "power1.inOut" });
+// Render inactive verticals for mobile (normal writing mode)
+function renderMobileList() {
+  mobileListContainer.innerHTML = "";
 
+  let inactiveCount = 0;
+  businessVerticals.forEach((vertical, index) => {
+    if (index !== activeIndex) {
+      const box = document.createElement("div");
+      box.className =
+        "flex items-center gap-3 !p-3 cursor-pointer hover:opacity-90 transition-all duration-300 w-full rounded-sm";
+
+      // Alternate background
+      box.style.backgroundColor =
+        inactiveCount % 2 === 0
+          ? "rgba(255,255,255,0.15)"
+          : "rgba(255,255,255,0.1)";
+
+      const indicator = document.createElement("div");
+      indicator.className = "w-3 h-3 flex-shrink-0";
+      indicator.style.backgroundColor = vertical.color;
+
+      const text = document.createElement("p");
+      text.className = "text-white text-xs font-light tracking-wide";
+      text.textContent = vertical.name.toUpperCase();
+
+      box.appendChild(indicator);
+      box.appendChild(text);
+
+      // Click handler
+      box.addEventListener("click", () => {
+        clearInterval(autoSlideInterval);
+        animateVerticalSlide(index);
+        startAutoSlide();
+      });
+
+      mobileListContainer.appendChild(box);
+      inactiveCount++;
+    }
+  });
+}
+
+// Animate vertical change
+function animateVerticalSlide(nextIndex) {
+  // Fade out current image & text
+  gsap.to(bgImage, { duration: 0.8, opacity: 0, ease: "power1.inOut" });
+  
+  // Desktop elements
+  if (mainHeading) {
+    gsap.to(mainHeading, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
+    gsap.to(mainDescription, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
+  }
+  
+  // Mobile elements
+  if (mobileMainHeading) {
+    gsap.to(mobileMainHeading, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
+    gsap.to(mobileMainDescription, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
+  }
+
+  // After fade-out, update content and fade new elements in
   setTimeout(() => {
     activeIndex = nextIndex;
     updateContent();
 
-    // Position new image & text off-screen right
-    gsap.set(bgImage, { x: 100, opacity: 0.4 });
-    gsap.set(mainHeading, { x: 30, opacity: 0 });
-    gsap.set(mainDescription, { x: 30, opacity: 0 });
+    // Set new image & text invisible initially
+    gsap.set(bgImage, { opacity: 0 });
+    
+    // Desktop
+    if (mainHeading) {
+      gsap.set(mainHeading, { opacity: 0 });
+      gsap.set(mainDescription, { opacity: 0 });
+    }
+    
+    // Mobile
+    if (mobileMainHeading) {
+      gsap.set(mobileMainHeading, { opacity: 0 });
+      gsap.set(mobileMainDescription, { opacity: 0 });
+    }
 
-    // Animate new image & text sliding in from right
-    gsap.to(bgImage, { duration: 1, x: 0, opacity: 1, ease: "power2.out" });
-    gsap.to(mainHeading, { duration: 0.8, x: 0, opacity: 1, ease: "power2.out" });
-    gsap.to(mainDescription, { duration: 0.8, x: 0, opacity: 1, ease: "power2.out" });
-  }, 500); // slight overlap for smooth transition
+    // Fade new image & text in
+    gsap.to(bgImage, { duration: 1, opacity: 1, ease: "power2.out" });
+    
+    // Desktop
+    if (mainHeading) {
+      gsap.to(mainHeading, { duration: 0.8, opacity: 1, ease: "power2.out" });
+      gsap.to(mainDescription, { duration: 0.8, opacity: 1, ease: "power2.out" });
+    }
+    
+    // Mobile
+    if (mobileMainHeading) {
+      gsap.to(mobileMainHeading, { duration: 0.8, opacity: 1, ease: "power2.out" });
+      gsap.to(mobileMainDescription, { duration: 0.8, opacity: 1, ease: "power2.out" });
+    }
+  }, 500);
 }
 
 // Update content
@@ -297,28 +377,39 @@ function updateContent() {
   const current = businessVerticals[activeIndex];
 
   bgImage.src = current.image;
-  mainHeading.textContent = current.heading;
-  mainHeading.style.textDecorationColor = current.underlineColor;
-  mainDescription.textContent = current.content;
-
-  activeVerticalText.textContent = current.name.toUpperCase();
-  activeIndicator.style.backgroundColor = current.color;
-
-  renderInactiveVerticals();
+  
+  // Update desktop elements
+  if (mainHeading) {
+    mainHeading.textContent = current.heading;
+    mainHeading.style.textDecorationColor = current.underlineColor;
+    mainDescription.textContent = current.content;
+    activeVerticalText.textContent = current.name.toUpperCase();
+    activeIndicator.style.backgroundColor = current.color;
+    renderInactiveVerticals();
+  }
+  
+  // Update mobile elements
+  if (mobileMainHeading) {
+    mobileMainHeading.textContent = current.heading;
+    mobileMainHeading.style.textDecorationColor = current.underlineColor;
+    mobileMainDescription.textContent = current.content;
+    mobileActiveText.textContent = current.name.toUpperCase();
+    mobileActiveIndicator.style.backgroundColor = current.color;
+    renderMobileList();
+  }
 }
 
-// Auto-slide every 30s
+// Auto-slide every 10s
 function startAutoSlide() {
   autoSlideInterval = setInterval(() => {
     const nextIndex = (activeIndex + 1) % businessVerticals.length;
     animateVerticalSlide(nextIndex);
-  }, 30000);
+  }, 10000);
 }
 
 // Initialize
 updateContent();
 startAutoSlide();
-
 //footer
   // Smooth scroll to top
   document.querySelector('img[alt="to_top"]').addEventListener('click', () => {

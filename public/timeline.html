@@ -1,26 +1,388 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/src/timeline.css">
+    <link rel="stylesheet" href="/src/timeline.css" />
     <title>final_page</title>
   </head>
   <body>
-    <div id="canvas-container"></div>
+    <header class="z-50 fixed top-0 left-0 right-0">
+      <nav
+        class="flex items-center bg-white opacity-90 justify-between !px-4 sm:!px-8 lg:!px-12 !py-2"
+      >
+        <!-- Logo -->
+        <div>
+          <img
+            src="/assets/Header_Logo.svg"
+            alt="head_logo"
+            class="h-16 sm:h-20"
+          />
+        </div>
 
-    <div class="scroll-container"></div>
+        <!-- Desktop menu -->
+        <div class="hidden md:flex items-center gap-4 text-[#424557]">
+          <a href="#" class="hover:text-[#C4A574]">About</a>
+          <a href="#" class="hover:text-[#C4A574]">Businesses</a>
+          <a href="#" class="hover:text-[#C4A574]">Media</a>
+          <a href="#" class="hover:text-[#C4A574]">Philantrophy</a>
+          <a href="/timeline.html" class="hover:text-[#C4A574]">Timeline</a>
+          <a href="#" class="hover:text-[#C4A574]">Contact</a>
+          <img src="/assets/Search_Icon.svg" alt="search" class="h-5" />
+        </div>
 
-    <div class="ui-overlay">
+        <!-- Mobile hamburger -->
+        <div class="md:hidden flex items-center">
+          <button id="mobile-menu-btn" class="focus:outline-none z-50 relative">
+            <svg
+              class="w-6 h-6 text-gray-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 8h16M4 16h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
 
-        <div class="year-display" id="yearDisplay">2015</div>
-        <p class="info_text" id="infoText">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam rerum dolor repudiandae at, illum similique perspiciatis dolores dolorem debitis, veritatis illo nulla. Assumenda, error voluptatem cumque eligendi nesciunt eius odit?</p>
+      <!-- Mobile sidebar overlay -->
+      <div
+        id="mobile-overlay"
+        class="hidden fixed inset-0 bg-opacity-50 z-40 md:hidden transition-opacity"
+      ></div>
 
-          <div class="timeline-bar" id="timelineBar"></div>
+      <!-- Mobile sidebar menu (opens from left) -->
+      <div
+        id="mobile-menu"
+        class="fixed top-0 left-0 h-full w-[80%] bg-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden z-50"
+      >
+        <div class="flex flex-col h-full">
+          <!-- Header inside sidebar -->
+          <div
+            class="flex justify-between items-center !p-4 border-b border-gray-200"
+          >
+            <img
+              src="/assets/Header_Logo.svg"
+              alt="sidebar_logo"
+              class="h-14"
+            />
+            <button id="close-menu-btn" class="focus:outline-none">
+              <svg
+                class="w-6 h-6 text-gray-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
 
-        <div class="scroll-hint">Scroll Down</div>
-    </div>
+          <!-- Menu items -->
+          <div
+            class="flex flex-col gap-6 !px-6 !py-4 text-[#424557] overflow-y-auto flex-1"
+          >
+            <a
+              href="#"
+              class="hover:text-[#C4A574] border-b border-gray-200 pb-3"
+              >About</a
+            >
+            <a
+              href="#"
+              class="hover:text-[#C4A574] border-b border-gray-200 pb-3"
+              >Businesses</a
+            >
+            <a
+              href="#"
+              class="hover:text-[#C4A574] border-b border-gray-200 pb-3"
+              >Media</a
+            >
+            <a
+              href="#"
+              class="hover:text-[#C4A574] border-b border-gray-200 pb-3"
+              >Philantrophy</a
+            >
+            <a
+              href="/timeline.html"
+              class="hover:text-[#C4A574] border-b border-gray-200 pb-3"
+              >Timeline</a
+            >
+            <a
+              href="#"
+              class="hover:text-[#C4A574] border-b border-gray-200 pb-3"
+              >Contact</a
+            >
+            <div class="pt-4">
+              <img src="/assets/Search_Icon.svg" alt="search" class="h-5" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <section class="relative w-full h-screen">
+      <img
+        src="assets/timeline/Layer 12.png"
+        alt=""
+        class="w-full h-full object-cover"
+      />
+    </section>
+
+    <section>
+      <div
+        class="w-full flex justify-center !px-4 sm:!px-6 lg:!px-8 !py-10 sm:!py-14 lg:!py-20 text-[#606060] !mb-12 sm:!mb-16 lg:!mb-20"
+      >
+        <p
+          class="text-center max-w-6xl text-2xl sm:text-3xl md:text-4xl leading-relaxed sm:leading-relaxed md:leading-normal"
+        >
+          Adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo
+          viverra maecenas accumsan lacus vel facilisis.
+        </p>
+      </div>
+    </section>
+
+    <!-- Timeline Section (Canvas + UI Overlay) -->
+    <section class="relative timeline-section">
+      <!-- Sticky container wrapper -->
+      <div class="relative h-[500vh]">
+        <!-- Sticky wrapper for both canvas and UI -->
+        <div class="sticky top-0 left-0 w-full h-screen">
+          <!-- Canvas container (background layer) -->
+          <div
+            id="canvas-container"
+            class="absolute top-0 left-0 w-full h-screen z-1"
+          ></div>
+
+          <!-- UI Overlay (foreground layer) -->
+          <div
+            class="ui-overlay absolute top-0 left-0 w-full h-screen z-10 pointer-events-none"
+          >
+            <div
+              class="relative font-thin flex flex-col items-center justify-center h-screen"
+            >
+              <p class="year-display !mt-12" id="yearDisplay">1965</p>
+              <p class="info_text -translate-y-6" id="infoText">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Quisquam rerum dolor repudiandae at, illum similique
+                perspiciatis dolores dolorem debitis, veritatis illo nulla.
+                Assumenda, error voluptatem cumque eligendi nesciunt eius odit?
+              </p>
+            </div>
+
+            <!-- Decorative circles - properly centered and responsive -->
+            <div class="circle-container">
+              <img
+                src="assets/timeline/INNER CIRCLE.svg"
+                alt=""
+                class="inner-circle"
+              />
+              <img
+                src="assets/timeline/OUTET CIRCLE.svg"
+                alt=""
+                class="outer-circle"
+              />
+            </div>
+
+            <img
+              src="assets/timeline/Animataion_top_logo.svg"
+              alt=""
+              class="absolute -top-10 right-5 h-30 md:right-8 lg:right-12"
+            />
+
+            <div class="timeline-bar" id="timelineBar"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="!mt-60">
+      <!-- Bottom text -->
+      <div
+        class="w-full flex justify-center !px-4 sm:!px-6 lg:!px-8 !py-10 sm:!py-14 lg:!py-20 text-[#606060] bg-[#E1E1E1] relative z-20"
+      >
+        <p
+          class="text-center max-w-6xl text-2xl sm:text-3xl md:text-4xl leading-relaxed sm:leading-relaxed md:leading-normal"
+        >
+          Quis ipsum suspendisse ultrices gravida. Risus commodo viverra
+          maecenas accumsan lacus vel facilisis.
+        </p>
+      </div>
+    </section>
+    <footer
+      class="bg-[#031F46] text-[#acacac] relative min-h-[400px] lg:min-h-[500px]"
+    >
+      <!-- Decorative Elements -->
+      <img
+        src="/assets/Footer_Aseet.svg"
+        alt=""
+        class="hidden xl:block h-50 bg-transparent absolute bottom-37 right-20"
+      />
+      <img
+        src="/assets/To_top.svg"
+        alt="to_top"
+        class="bg-transparent absolute top-8 right-8 lg:top-17 lg:right-10 h-[40px] cursor-pointer hover:opacity-80 transition-opacity z-10"
+      />
+
+      <div
+        class="container mx-auto !px-6 sm:!px-8 lg:!px-12 !pt-16 lg:!pt-20 !pb-8"
+      >
+        <!-- Top section with logo and menu -->
+        <div
+          class="flex flex-col lg:flex-row items-start justify-between gap-12 lg:gap-20 !mb-12 lg:!mb-20"
+        >
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <img
+              src="/assets/Footer_logo.svg"
+              alt="Al Faisal Holding"
+              class="h-20 lg:h-28"
+            />
+          </div>
+
+          <!-- Main Navigation with Business Categories -->
+          <!-- Main Navigation with Business Categories -->
+          <nav
+            class="flex flex-col sm:flex-row gap-8 sm:gap-10 lg:gap-16 text-sm lg:text-base uppercase tracking-wider flex-1 justify-center"
+          >
+            <div class="flex flex-col gap-3">
+              <a href="#" class="hover:text-[#C4A574] font-medium">ABOUT</a>
+            </div>
+
+            <div class="flex flex-col gap-3">
+              <a href="#" class="hover:text-[#C4A574] font-medium mb-2"
+                >BUSINESSES</a
+              >
+              <!-- Business Categories under BUSINESSES -->
+              <div
+                class="flex flex-col gap-2 text-xs lg:text-sm text-[#8B9DB5] tracking-normal font-light uppercase"
+              >
+                <a href="#" class="hover:text-white">Real Estate</a>
+                <a href="#" class="hover:text-white">Hospitality</a>
+                <a href="#" class="hover:text-white"
+                  >Construction & Project Management</a
+                >
+                <a href="#" class="hover:text-white"
+                  >Culture, Education, Leisure, Sport</a
+                >
+                <a href="#" class="hover:text-white">Services</a>
+                <a href="#" class="hover:text-white">Trading & Distribution</a>
+                <a href="#" class="hover:text-white">Financial Investments</a>
+                <a href="#" class="hover:text-white">Manufacturing</a>
+                <a href="#" class="hover:text-white">Aamal Company Q.P.S.C</a>
+              </div>
+            </div>
+
+            <!-- Just nudged slightly left -->
+            <div
+              class="flex flex-col gap-3 !mr-12 lg:-translate-x-40 sm:-translate-x-3"
+            >
+              <a href="#" class="hover:text-[#C4A574] font-medium">MEDIA</a>
+            </div>
+
+            <div
+              class="flex flex-col gap-3 lg:-translate-x-50 sm:-translate-x-3"
+            >
+              <a href="#" class="hover:text-[#C4A574] font-medium"
+                >PHILANTHROPY</a
+              >
+            </div>
+
+            <div
+              class="flex flex-col gap-3 lg:-translate-x-50 sm:-translate-x-3"
+            >
+              <a href="#" class="hover:text-[#C4A574] font-medium">CONTACT</a>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Bottom bar with copyright and social links -->
+      <div class="bg-black/30 border-t border-white/10 !mt-20">
+        <div class="container mx-auto !px-6 sm:!px-8 lg:!px-12 !py-4 lg:!py-5">
+          <div
+            class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-8 text-xs text-[#DFD3C7]/70"
+          >
+            <!-- Left side - Copyright and links -->
+            <div
+              class="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-6 items-start sm:items-center flex-wrap"
+            >
+              <span class="whitespace-nowrap">© 2025 Al Faisal Holding.</span>
+              <div class="flex flex-wrap gap-2 sm:gap-3 items-center">
+                <a href="#" class="hover:text-white whitespace-nowrap"
+                  >Privacy Policy</a
+                >
+                <span class="hidden sm:inline text-[#DFD3C7]/40">|</span>
+                <a href="#" class="hover:text-white whitespace-nowrap"
+                  >Terms of Use</a
+                >
+                <span class="hidden sm:inline text-[#DFD3C7]/40">|</span>
+                <a href="#" class="hover:text-white whitespace-nowrap"
+                  >Disclaimer</a
+                >
+                <span class="hidden sm:inline text-[#DFD3C7]/40">|</span>
+                <a href="#" class="hover:text-white whitespace-nowrap"
+                  >Accessibility</a
+                >
+              </div>
+            </div>
+
+            <!-- Right side - Social links -->
+            <div class="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 items-center">
+              <a href="#" class="hover:text-white whitespace-nowrap"
+                >LinkedIn</a
+              >
+              <span class="hidden sm:inline text-[#DFD3C7]/40">|</span>
+              <a href="#" class="hover:text-white whitespace-nowrap">X</a>
+              <span class="hidden sm:inline text-[#DFD3C7]/40">|</span>
+              <a href="#" class="hover:text-white whitespace-nowrap">YouTube</a>
+              <span class="hidden sm:inline text-[#DFD3C7]/40">|</span>
+              <a href="#" class="hover:text-white whitespace-nowrap"
+                >Instagram</a
+              >
+              <span class="hidden sm:inline text-[#DFD3C7]/40">|</span>
+              <a href="#" class="hover:text-white whitespace-nowrap"
+                >Facebook</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning text -->
+      <div class="bg-[#031F46] !px-6 sm:!px-8 lg:!px-12 !py-4 lg:!py-5">
+        <p
+          class="text-[#756750] text-xs leading-relaxed max-w-10xl mx-auto text-center"
+        >
+          Warning: It has come to the attention of Al Faisal Holding that
+          unauthorized persons are contacting members of the public or business
+          community by various means including telecommunications, emails and
+          through social and professional networking sites claiming to be
+          representing Al Faisal Holding or its shareholders or associated
+          entities. These unauthorized persons may be attempting to commit
+          fraudulent acts and deceive the public and no dealings should take
+          place with any such persons and any business or other relationship
+          with Al Faisal Holding will only be conducted through official
+          channels by persons authorised under constitutional documentation of
+          the Company. Al Faisal Holding will never attempt to solicit business
+          on a cold-call basis in such a manner. Al Faisal Holding will not be
+          liable for any fraudulent activities carried out in the aforementioned
+          manner.
+          <strong class="text-[#8B7355]">Fraudulent acts disclaimer</strong>
+        </p>
+      </div>
+    </footer>
     <script type="module" src="/src/timeline.js"></script>
   </body>
 </html>
