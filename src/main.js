@@ -111,7 +111,9 @@ mobileOverlay.addEventListener("click", () => {
   }, 5000);
 
 
-import { gsap } from "gsap";
+// ============================================
+// HORIZONTAL ACCORDION - Business Verticals
+// ============================================
 
 const businessVerticals = [
   {
@@ -214,202 +216,310 @@ const businessVerticals = [
   },
 ];
 
-let activeIndex = 0;
-let autoSlideInterval;
+let activeAccordionIndex = 0;
+let autoAccordionInterval;
 
-// DOM elements - Desktop
-const bgImage = document.getElementById("bg-image");
-const mainHeading = document.getElementById("main-heading");
-const mainDescription = document.getElementById("main-description");
-const activeVerticalText = document.getElementById("active-vertical-text");
-const activeIndicator = document.getElementById("active-indicator");
-const verticalListContainer = document.getElementById("vertical-list-container");
+// Desktop Accordion
+const accordionContainer = document.getElementById("accordion-container");
+const mobileAccordionContainer = document.getElementById("mobile-accordion-container");
 
-// DOM elements - Mobile
-const mobileActiveText = document.getElementById("mobile-active-text");
-const mobileActiveIndicator = document.getElementById("mobile-active-indicator");
-const mobileMainHeading = document.getElementById("mobile-main-heading");
-const mobileMainDescription = document.getElementById("mobile-main-description");
-const mobileListContainer = document.getElementById("mobile-list-container");
-
-// Render inactive verticals for desktop
-function renderInactiveVerticals() {
-  verticalListContainer.innerHTML = "";
-
-  let inactiveCount = 0;
+// Create Desktop Horizontal Accordion Panels
+function createDesktopAccordion() {
+  if (!accordionContainer) return;
+  
+  accordionContainer.innerHTML = '';
+  
   businessVerticals.forEach((vertical, index) => {
-    if (index !== activeIndex) {
-      const box = document.createElement("div");
-      box.className =
-        "flex gap-2 !mt-7 flex-col items-center justify-end p-4 cursor-pointer hover:opacity-100 transition-all duration-300 h-[98.5%] !p-4";
-
-      // Alternate background
-      box.style.backgroundColor =
-        inactiveCount % 2 === 0
-          ? "rgba(255,255,255,0.15)"
-          : "rgba(255,255,255,0.05)";
-
-      const text = document.createElement("p");
-      text.className =
-        "text-white text-base sm:text-lg tracking-widest transition-colors";
-      text.style.writingMode = "vertical-rl";
-      text.style.textOrientation = "mixed";
-      text.style.transform = "rotate(180deg)";
-      text.textContent = vertical.name.toUpperCase();
-
-      const indicator = document.createElement("div");
-      indicator.className = "w-4 h-4";
-      indicator.style.backgroundColor = vertical.color;
-
-      box.appendChild(text);
-      box.appendChild(indicator);
-
-      // Click handler with animation
-      box.addEventListener("click", () => {
-        clearInterval(autoSlideInterval);
-        animateVerticalSlide(index);
-        startAutoSlide();
-      });
-
-      verticalListContainer.appendChild(box);
-      inactiveCount++;
+    const panel = document.createElement('div');
+    panel.className = 'accordion-panel relative overflow-hidden cursor-pointer transition-all duration-700 ease-in-out';
+    panel.style.flex = index === activeAccordionIndex ? '1 1 70%' : '1 1 5%';
+    panel.dataset.index = index;
+    
+    // Background image
+    const bgImg = document.createElement('img');
+    bgImg.src = vertical.image;
+    bgImg.alt = vertical.name;
+    bgImg.className = 'absolute inset-0 w-full h-full object-cover transition-opacity duration-700';
+    bgImg.style.opacity = index === activeAccordionIndex ? '1' : '0.7';
+    
+    // Overlay for better text readability
+    const overlay = document.createElement('div');
+    overlay.className = 'absolute inset-0 bg-black transition-opacity duration-700';
+    overlay.style.opacity = index === activeAccordionIndex ? '0.3' : '0.5';
+    
+    // Content container
+ // Content container
+    const content = document.createElement('div');
+    content.className = 'absolute inset-0 flex items-end transition-all duration-700';
+    
+    if (index === activeAccordionIndex) {
+      // Active panel - show full content with vertical heading
+      content.innerHTML = `
+        <div class="flex items-end gap-12 !p-8 w-full">
+          <div class="flex flex-col items-center gap-4">
+            <p class="text-white text-lg tracking-widest uppercase vertical-text">${vertical.name}</p>
+            <div class="w-4 h-4 rounded-sm" style="background-color: ${vertical.color}"></div>
+          </div>
+          <div class="text-white space-y-6 max-w-2xl flex flex-col gap-6 !mb-20 !ml-20">
+            <h2 class="text-3xl font-light underline underline-offset-8 tracking-wide" style="text-decoration-color: ${vertical.underlineColor}">${vertical.heading}</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">${vertical.content}</p>
+            <button class="text-white !px-6 !py-2 border border-[#9D8055] font-medium hover:bg-[#9D8055] transition-all duration-300 rounded text-lg w-[200px] text-left">
+              Explore
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      // Inactive panel - show vertical text
+      content.innerHTML = `
+        <div class="w-full h-full flex items-end justify-center !pb-8">
+          <div class="flex flex-col items-center gap-4">
+            <p class="text-white text-lg tracking-widest uppercase vertical-text">${vertical.name}</p>
+            <div class="w-4 h-4 rounded-sm" style="background-color: ${vertical.color}"></div>
+          </div>
+        </div>
+      `;
     }
+    
+    // Click handler
+    panel.addEventListener('click', () => {
+      if (index !== activeAccordionIndex) {
+        clearInterval(autoAccordionInterval);
+        setActivePanel(index);
+        startAutoAccordion();
+      }
+    });
+    
+    panel.appendChild(bgImg);
+    panel.appendChild(overlay);
+    panel.appendChild(content);
+    accordionContainer.appendChild(panel);
   });
 }
 
-// Render inactive verticals for mobile (normal writing mode)
-function renderMobileList() {
-  mobileListContainer.innerHTML = "";
+// Set active panel with smooth animation
+function setActivePanel(newIndex) {
+  const panels = accordionContainer.querySelectorAll('.accordion-panel');
+  
+  panels.forEach((panel, index) => {
+    const bgImg = panel.querySelector('img');
+    const overlay = panel.querySelector('.absolute.bg-black');
+    const content = panel.querySelector('.absolute.inset-0.flex');
 
-  let inactiveCount = 0;
-  businessVerticals.forEach((vertical, index) => {
-    if (index !== activeIndex) {
-      const box = document.createElement("div");
-      box.className =
-        "flex items-center gap-3 !p-3 cursor-pointer hover:opacity-90 transition-all duration-300 w-full rounded-sm";
+    if (index === newIndex) {
+      // Activate this panel
+      panel.style.flex = '1 1 70%';
+      bgImg.style.opacity = '1';
+      overlay.style.opacity = '0.3';
 
-      // Alternate background
-      box.style.backgroundColor =
-        inactiveCount % 2 === 0
-          ? "rgba(255,255,255,0.15)"
-          : "rgba(255,255,255,0.1)";
+      // Match new desktop accordion layout
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="flex items-end gap-12 !p-8 w-full">
+            <div class="flex flex-col items-center gap-4">
+              <p class="text-white text-lg tracking-widest uppercase vertical-text">${businessVerticals[index].name}</p>
+              <div class="w-4 h-4 rounded-sm" style="background-color: ${businessVerticals[index].color}"></div>
+            </div>
+            <div class="text-white space-y-6 max-w-2xl flex flex-col gap-6 !mb-20 !ml-20">
+              <h2 class="text-3xl font-light underline underline-offset-8 tracking-wide" 
+                  style="text-decoration-color: ${businessVerticals[index].underlineColor}">
+                  ${businessVerticals[index].heading}
+              </h2>
+              <p class="text-2xl text-gray-300 leading-relaxed">${businessVerticals[index].content}</p>
+              <button class="text-white !px-6 !py-2 border border-[#9D8055] font-medium hover:bg-[#9D8055] 
+                             transition-all duration-300 rounded text-lg w-[200px] text-left">
+                Explore
+              </button>
+            </div>
+          </div>
+        `;
+      }, 300);
+    } else {
+      // Deactivate this panel
+      panel.style.flex = '1 1 5%';
+      bgImg.style.opacity = '0.7';
+      overlay.style.opacity = '0.5';
 
-      const indicator = document.createElement("div");
-      indicator.className = "w-3 h-3 flex-shrink-0";
-      indicator.style.backgroundColor = vertical.color;
-
-      const text = document.createElement("p");
-      text.className = "text-white text-xs font-light tracking-wide";
-      text.textContent = vertical.name.toUpperCase();
-
-      box.appendChild(indicator);
-      box.appendChild(text);
-
-      // Click handler
-      box.addEventListener("click", () => {
-        clearInterval(autoSlideInterval);
-        animateVerticalSlide(index);
-        startAutoSlide();
-      });
-
-      mobileListContainer.appendChild(box);
-      inactiveCount++;
+      // Match inactive state style
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="w-full h-full flex items-end justify-center !pb-8">
+            <div class="flex flex-col items-center gap-4">
+              <p class="text-white text-lg tracking-widest uppercase vertical-text">${businessVerticals[index].name}</p>
+              <div class="w-4 h-4 rounded-sm" style="background-color: ${businessVerticals[index].color}"></div>
+            </div>
+          </div>
+        `;
+      }, 300);
     }
+  });
+
+  activeAccordionIndex = newIndex;
+}
+
+
+// Create Mobile Vertical Accordion
+function createMobileAccordion() {
+  if (!mobileAccordionContainer) return;
+  
+  mobileAccordionContainer.innerHTML = '';
+  
+  businessVerticals.forEach((vertical, index) => {
+    const panel = document.createElement('div');
+    panel.className = 'mobile-accordion-panel relative overflow-hidden cursor-pointer transition-all duration-700 ease-in-out';
+    panel.style.height = index === activeAccordionIndex ? '400px' : '60px';
+    panel.dataset.index = index;
+    
+    // Background image
+    const bgImg = document.createElement('img');
+    bgImg.src = vertical.image;
+    bgImg.alt = vertical.name;
+    bgImg.className = 'absolute inset-0 w-full h-full object-cover transition-opacity duration-700';
+    bgImg.style.opacity = index === activeAccordionIndex ? '1' : '0.7';
+    
+    // Overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'absolute inset-0 bg-black transition-opacity duration-700';
+    overlay.style.opacity = index === activeAccordionIndex ? '0.3' : '0.6';
+    
+    // Content
+    const content = document.createElement('div');
+    content.className = 'absolute inset-0 p-4 flex flex-col justify-end transition-all duration-700';
+    
+    if (index === activeAccordionIndex) {
+      // Active - full content
+      content.innerHTML = `
+        <div class="text-white space-y-6 !p-8">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-3 h-3 rounded-sm" style="background-color: ${vertical.color}"></div>
+            <p class="text-xs tracking-wide uppercase">${vertical.name}</p>
+          </div>
+          <div class="flex flex-col gap-3">
+            <h3 class="text-xl font-light underline underline-offset-4 tracking-wide" style="text-decoration-color: ${vertical.underlineColor}">${vertical.heading}</h3>
+            <p class="text-lg text-gray-300 leading-relaxed">${vertical.content}</p>
+            <button class="text-white mt-3 !px-4 !py-1.5 border border-[#9D8055] font-medium hover:bg-[#9D8055] transition-all duration-300 rounded text-sm text-left w-[150px]">
+              Explore
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      // Inactive - just title
+      content.innerHTML = `
+        <div class="flex items-center gap-3 h-full !pl-2">
+          <div class="w-3 h-3 rounded-sm flex-shrink-0" style="background-color: ${vertical.color}"></div>
+          <p class="text-white text-sm tracking-wide uppercase font-medium">${vertical.name}</p>
+        </div>
+      `;
+    }
+    
+    // Click handler
+    panel.addEventListener('click', () => {
+      if (index !== activeAccordionIndex) {
+        clearInterval(autoAccordionInterval);
+        setActiveMobilePanel(index);
+        startAutoAccordion();
+      }
+    });
+    
+    panel.appendChild(bgImg);
+    panel.appendChild(overlay);
+    panel.appendChild(content);
+    mobileAccordionContainer.appendChild(panel);
   });
 }
 
-// Animate vertical change
-function animateVerticalSlide(nextIndex) {
-  // Fade out current image & text
-  gsap.to(bgImage, { duration: 0.8, opacity: 0, ease: "power1.inOut" });
+// Set active mobile panel
+function setActiveMobilePanel(newIndex) {
+  const panels = mobileAccordionContainer.querySelectorAll('.mobile-accordion-panel');
   
-  // Desktop elements
-  if (mainHeading) {
-    gsap.to(mainHeading, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
-    gsap.to(mainDescription, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
-  }
+  panels.forEach((panel, index) => {
+    const bgImg = panel.querySelector('img');
+    const overlay = panel.querySelector('.absolute.bg-black');
+    const content = panel.querySelector('.absolute.inset-0.p-4');
+    
+    if (index === newIndex) {
+      // Activate
+      panel.style.height = '400px';
+      bgImg.style.opacity = '1';
+      overlay.style.opacity = '0.3';
+      
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="text-white space-y-3 opacity-0 !p-8" style="animation: fadeIn 0.7s forwards;">
+            <div class="flex items-center gap-2 !mb-2">
+              <div class="w-3 h-3 rounded-sm" style="background-color: ${businessVerticals[index].color}"></div>
+              <p class="text-xs tracking-wide uppercase">${businessVerticals[index].name}</p>
+            </div>
+            <div class="flex flex-col gap-3">
+              <h3 class="text-xl font-light underline underline-offset-4 tracking-wide" style="text-decoration-color: ${businessVerticals[index].underlineColor}">${businessVerticals[index].heading}</h3>
+              <p class="text-sm text-gray-300 leading-relaxed">${businessVerticals[index].content}</p>
+              <button class="text-white mt-3 !px-4 !py-1.5 border border-[#9D8055] font-medium hover:bg-[#9D8055] transition-all duration-300 rounded text-sm w-[150px] text-left">
+                Explore
+              </button>
+            </div>
+          </div>
+        `;
+      }, 300);
+    } else {
+      // Deactivate
+      panel.style.height = '60px';
+      bgImg.style.opacity = '0.7';
+      overlay.style.opacity = '0.6';
+      
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="flex items-center gap-3 h-full !pl-4">
+            <div class="w-3 h-3 rounded-sm flex-shrink-0" style="background-color: ${businessVerticals[index].color}"></div>
+            <p class="text-white text-sm tracking-wide uppercase font-medium">${businessVerticals[index].name}</p>
+          </div>
+        `;
+      }, 300);
+    }
+  });
   
-  // Mobile elements
-  if (mobileMainHeading) {
-    gsap.to(mobileMainHeading, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
-    gsap.to(mobileMainDescription, { duration: 0.6, opacity: 0, ease: "power1.inOut" });
-  }
-
-  // After fade-out, update content and fade new elements in
-  setTimeout(() => {
-    activeIndex = nextIndex;
-    updateContent();
-
-    // Set new image & text invisible initially
-    gsap.set(bgImage, { opacity: 0 });
-    
-    // Desktop
-    if (mainHeading) {
-      gsap.set(mainHeading, { opacity: 0 });
-      gsap.set(mainDescription, { opacity: 0 });
-    }
-    
-    // Mobile
-    if (mobileMainHeading) {
-      gsap.set(mobileMainHeading, { opacity: 0 });
-      gsap.set(mobileMainDescription, { opacity: 0 });
-    }
-
-    // Fade new image & text in
-    gsap.to(bgImage, { duration: 1, opacity: 1, ease: "power2.out" });
-    
-    // Desktop
-    if (mainHeading) {
-      gsap.to(mainHeading, { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to(mainDescription, { duration: 0.8, opacity: 1, ease: "power2.out" });
-    }
-    
-    // Mobile
-    if (mobileMainHeading) {
-      gsap.to(mobileMainHeading, { duration: 0.8, opacity: 1, ease: "power2.out" });
-      gsap.to(mobileMainDescription, { duration: 0.8, opacity: 1, ease: "power2.out" });
-    }
-  }, 500);
+  activeAccordionIndex = newIndex;
 }
 
-// Update content
-function updateContent() {
-  const current = businessVerticals[activeIndex];
-
-  bgImage.src = current.image;
-  
-  // Update desktop elements
-  if (mainHeading) {
-    mainHeading.textContent = current.heading;
-    mainHeading.style.textDecorationColor = current.underlineColor;
-    mainDescription.textContent = current.content;
-    activeVerticalText.textContent = current.name.toUpperCase();
-    activeIndicator.style.backgroundColor = current.color;
-    renderInactiveVerticals();
-  }
-  
-  // Update mobile elements
-  if (mobileMainHeading) {
-    mobileMainHeading.textContent = current.heading;
-    mobileMainHeading.style.textDecorationColor = current.underlineColor;
-    mobileMainDescription.textContent = current.content;
-    mobileActiveText.textContent = current.name.toUpperCase();
-    mobileActiveIndicator.style.backgroundColor = current.color;
-    renderMobileList();
-  }
+// Auto-rotate accordion
+function startAutoAccordion() {
+  autoAccordionInterval = setInterval(() => {
+    const nextIndex = (activeAccordionIndex + 1) % businessVerticals.length;
+    
+    if (window.innerWidth >= 1024) {
+      setActivePanel(nextIndex);
+    } else {
+      setActiveMobilePanel(nextIndex);
+    }
+  }, 8000);
 }
 
-// Auto-slide every 10s
-function startAutoSlide() {
-  autoSlideInterval = setInterval(() => {
-    const nextIndex = (activeIndex + 1) % businessVerticals.length;
-    animateVerticalSlide(nextIndex);
-  }, 10000);
+// Initialize accordion
+function initAccordion() {
+  if (window.innerWidth >= 1024) {
+    createDesktopAccordion();
+  } else {
+    createMobileAccordion();
+  }
+  startAutoAccordion();
 }
 
-// Initialize
-updateContent();
-startAutoSlide();
+// Handle window resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    clearInterval(autoAccordionInterval);
+    initAccordion();
+  }, 250);
+});
+
+// Start accordion on load
+if (accordionContainer || mobileAccordionContainer) {
+  initAccordion();
+}
+
+
 //footer
   // Smooth scroll to top
   document.querySelector('img[alt="to_top"]').addEventListener('click', () => {

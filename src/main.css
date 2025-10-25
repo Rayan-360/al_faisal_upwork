@@ -2,6 +2,11 @@
 
 /* FSSienaTrial Font Family - Clean Setup */
 
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 @font-face {
   font-family: 'FSSienaTrial';
   src: url('/src/fonts/FSSienaTrial-Thin.otf') format('opentype');
@@ -132,4 +137,37 @@ ul,li{
     to {
       opacity: 1;
     }
+  }
+
+  /* Accordion Styles */
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Smooth accordion transitions */
+  .accordion-panel,
+  .mobile-accordion-panel {
+    will-change: flex, height;
+  }
+
+  /* Hover effect for inactive panels */
+  .accordion-panel:not(:has(.max-w-2xl)):hover {
+    opacity: 0.95;
+  }
+
+  .mobile-accordion-panel:not([style*="400px"]):hover {
+    opacity: 0.95;
   }

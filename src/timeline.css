@@ -1,3 +1,12 @@
+/* Fade animation for year and info text */
+.fade-anim {
+    opacity: 1;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fade-anim.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 @import "tailwindcss";
 
 /* FSSienaTrial Font Family - Clean Setup */
@@ -168,15 +177,11 @@ body {
     left: 10px;
 }
 
-.tick-year {
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-right: 10px;
-    color: gray;
-    font-size: 16px;
-    white-space: nowrap;
+/* Keep all your existing media queries... */
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
 }
 
 /* Keep all your existing media queries... */
@@ -208,11 +213,16 @@ body {
   height: 2px;
   background: #84ACDE;
   border-radius: 2px;
-  transition: all left 0.2s ease-in-out;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0.6;
+  transform: scaleX(0.8);
 }
 
 .timeline-tick.active {
   left: 10px;
+  opacity: 1;
+  transform: scaleX(1.2);
+  box-shadow: 0 0 12px rgba(132, 172, 222, 0.6);
 }
 
 .tick-year {
@@ -224,6 +234,12 @@ body {
   color: gray;
   font-size: 16px;
   white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out 0.1s;
+}
+
+.timeline-tick.active .tick-year {
+  opacity: 1;
 }
 
 /* Tablet styles (768px - 1024px) */

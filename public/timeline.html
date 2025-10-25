@@ -162,18 +162,18 @@
           <!-- Canvas container (background layer) -->
           <div
             id="canvas-container"
-            class="absolute top-0 left-0 w-full h-screen z-1"
+            class="absolute top-0 left-0 w-full h-screen z-[99]"
           ></div>
 
           <!-- UI Overlay (foreground layer) -->
           <div
-            class="ui-overlay absolute top-0 left-0 w-full h-screen z-10 pointer-events-none"
+            class="ui-overlay absolute top-0 left-0 w-full h-screen pointer-events-none"
           >
             <div
               class="relative font-thin flex flex-col items-center justify-center h-screen"
             >
-              <p class="year-display !mt-12" id="yearDisplay">1965</p>
-              <p class="info_text -translate-y-6" id="infoText">
+              <p class="year-display !mt-6 fade-anim z-[100]" id="yearDisplay">1965</p>
+              <p class="info_text -translate-y-6 fade-anim z-[100]" id="infoText">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
                 Quisquam rerum dolor repudiandae at, illum similique
                 perspiciatis dolores dolorem debitis, veritatis illo nulla.

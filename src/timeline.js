@@ -21,7 +21,7 @@ const yearInfoTexts = {
 const timelineBar = document.getElementById('timelineBar');
 const ticks = [];
 
-for (let i = 0; i < yearCount; i++) {
+for (let i = 0; i < 10; i++) {
   const tick = document.createElement('div');
   tick.classList.add('timeline-tick');
   timelineBar.appendChild(tick);
@@ -41,6 +41,12 @@ function updateActiveTick(currentYear) {
       yearLabel.classList.add('tick-year');
       yearLabel.textContent = year;
       tick.appendChild(yearLabel);
+
+      // Force reflow to restart animation
+      void tick.offsetWidth;
+      
+      // Add active class with animation
+      tick.classList.add('active');
 
     } else {
       tick.classList.remove('active');
@@ -123,7 +129,7 @@ function createCircularMask() {
 const circleMask = createCircularMask();
 
 // Responsive breakpoint flag used for positioning
-const isMobile = window.innerWidth < 768;
+let isMobile = window.innerWidth < 768;
 
 // Corner positions - alternating pattern
 const positionsSet1 = isMobile ? [
@@ -185,8 +191,17 @@ const fragmentShader = `
     float circle = 1.0 - smoothstep(finalDotSize - edgeSoftness, finalDotSize + edgeSoftness, dist);
     vec3 halftoneRGB = cellColor.rgb * circle;
     vec3 finalRGB = mix(texColor.rgb, halftoneRGB, eased);
-    float finalAlpha = mix(1.0, circle, eased) * maskColor.r * opacity;
-    gl_FragColor = vec4(finalRGB, finalAlpha);
+    // Visibility factor coming from CPU side (distance-based)
+    float vis = clamp(opacity, 0.0, 1.0);
+    
+  // Color fade: dim toward a neutral level without brightening (avoid "shine").
+  // Keep at least 0.6 brightness at lowest visibility to avoid going black.
+  vec3 fadedRGB = finalRGB * mix(0.6, 1.0, vis);
+    
+    // Alpha fade: keep fully opaque most of the time to occlude UI underneath,
+    // then fade alpha only in the last 25% of visibility for a smooth disappear.
+    float alphaFactor = min(1.0, vis * 4.0); // 1.0 when vis>=0.25, ramps down when smaller
+    gl_FragColor = vec4(fadedRGB, maskColor.r * alphaFactor);
   }
 `;
 
@@ -307,8 +322,21 @@ gsap.to(camera.position, {
         }
       });
       
-      yearDisplay.textContent = currentYear;
-      infoText.textContent = yearInfoTexts[currentYear];
+      // Animate fade-out, then change text, then fade-in
+      if (yearDisplay.textContent !== String(currentYear)) {
+        yearDisplay.classList.add('fade-out');
+        setTimeout(() => {
+          yearDisplay.textContent = currentYear;
+          yearDisplay.classList.remove('fade-out');
+        }, 300);
+      }
+      if (infoText.textContent !== yearInfoTexts[currentYear]) {
+        infoText.classList.add('fade-out');
+        setTimeout(() => {
+          infoText.textContent = yearInfoTexts[currentYear];
+          infoText.classList.remove('fade-out');
+        }, 300);
+      }
       updateActiveTick(currentYear);
     },
   },
@@ -502,8 +530,25 @@ function animate() {
   pointLight1.intensity = 1 + Math.sin(time) * 0.3;
   pointLight2.intensity = 1 + Math.cos(time) * 0.3;
 
-  camera.rotation.y += (mouseX * 0.05 - camera.rotation.y) * 0.05;
-  camera.rotation.x += (mouseY * 0.05 - camera.rotation.x) * 0.05;
+  // Subtle idle motion so the scene has life even without cursor movement
+  const idleYaw = (isMobile ? 0.015 : 0.03) * Math.sin(time * 0.35);
+  const idlePitch = (isMobile ? 0.010 : 0.02) * Math.cos(time * 0.27);
+
+  // Stronger cursor influence with sensible clamps
+  const yawGain = isMobile ? 0.05 : 0.14;     // how much mouseX affects yaw
+  const pitchGain = isMobile ? 0.04 : 0.12;   // how much mouseY affects pitch
+  const maxYaw = isMobile ? 0.22 : 0.42;      // radians
+  const maxPitch = isMobile ? 0.18 : 0.32;    // radians
+
+  const mouseYaw = THREE.MathUtils.clamp(mouseX * yawGain, -maxYaw, maxYaw);
+  const mousePitch = THREE.MathUtils.clamp(mouseY * pitchGain, -maxPitch, maxPitch);
+
+  const targetRotY = mouseYaw + idleYaw;
+  const targetRotX = mousePitch + idlePitch;
+
+  const rotLerp = 0.08; // slightly snappier than before
+  camera.rotation.y += (targetRotY - camera.rotation.y) * rotLerp;
+  camera.rotation.x += (targetRotX - camera.rotation.x) * rotLerp;
 
   renderer.render(scene, camera);
 }
@@ -556,3 +601,10 @@ mobileOverlay.addEventListener("click", () => {
   mobileMenu.classList.add("-translate-x-full");
   mobileOverlay.classList.add("hidden");
 });
+
+  document.querySelector('img[alt="to_top"]').addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });

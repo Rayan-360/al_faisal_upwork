@@ -357,135 +357,31 @@
         />
       </div>
     </section>
+    <!-- Horizontal Accordion Section -->
     <section
-      class="relative w-full h-[600px] md:h-[700px] lg:h-[800px] overflow-hidden rounded-3xl !px-4 sm:!px-8 !py-4 sm:!py-8 !mb-16"
+      class="relative w-full overflow-hidden rounded-3xl !px-4 sm:!px-8 !py-4 sm:!py-8 !mb-16"
     >
-      <!-- Background Image -->
-      <img
-        id="bg-image"
-        src="/assets/Business_Vericals_Slide1.jpg"
-        alt="Al Jazi Background"
-        class="absolute inset-0 !p-3 z-0 object-cover w-full h-full rounded-3xl overflow-clip"
-      />
-
       <!-- AF Element (hidden on smaller screens) -->
       <img
         src="/assets/AF_Element2.svg"
         alt=""
-        class="hidden lg:block absolute -top-15 -left-15 h-150 z-10"
+        class="hidden lg:block absolute -top-15 -left-15 h-150 z-10 pointer-events-none"
       />
 
-      <!-- Vertical List Container (Right Side - Inactive) - Desktop Only -->
+      <!-- Horizontal Accordion Container - Desktop (lg and up) -->
       <div
-        id="vertical-list-container"
-        class="absolute right-8 sm:right-12 lg:right-20 hidden bottom-7 z-20 lg:flex flex-row gap-0 h-[98.5%]"
+        id="accordion-container"
+        class="hidden lg:flex w-full h-[800px] rounded-3xl overflow-hidden"
       >
-        <!-- Inactive verticals will be inserted here by JS -->
+        <!-- Accordion panels will be dynamically inserted here -->
       </div>
 
-      <!-- Active Vertical Box (Left Side) - Desktop Only -->
+      <!-- Vertical Accordion Container - Mobile & Tablet -->
       <div
-        id="active-vertical-box"
-        class="absolute bottom-0 left-20 z-20 lg:flex hidden gap-2 flex-col items-center justify-end h-[98.5%] !p-4 transition-all duration-500"
+        id="mobile-accordion-container"
+        class="lg:hidden flex flex-col w-full rounded-3xl overflow-hidden"
       >
-        <p
-          id="active-vertical-text"
-          class="text-white text-xl tracking-widest !mb-4"
-          style="
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
-          "
-        >
-          REAL ESTATE
-        </p>
-        <div
-          id="active-indicator"
-          class="w-4 h-4 transition-colors duration-500 !mb-4"
-        ></div>
-      </div>
-      <div
-        class="absolute left-40 bottom-3 h-[97%] !p-6 bg-white opacity-10 lg:flex hidden"
-      ></div>
-
-      <!-- Main Content - Desktop -->
-      <div
-        class="absolute lg:-bottom-50 lg:left-40 z-20 hidden lg:flex items-center h-full !px-4 sm:!px-10 lg:!px-20"
-      >
-        <div
-          class="max-w-full sm:max-w-md lg:max-w-lg text-white !space-y-4 sm:!space-y-6"
-        >
-          <h1
-            id="main-heading"
-            class="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-light underline tracking-wide underline-offset-12 transition-all duration-500"
-          >
-            Al Jazi Real Estate
-          </h1>
-          <p
-            id="main-description"
-            class="!text-sm text-[#b1b1b1] sm:!text-base md:!text-lg lg:!text-2xl font-light leading-relaxed max-w-full sm:max-w-lg lg:max-w-4xl"
-          >
-            Established in 1995, Al Jazi Real Estate is a subsidiary of Al
-            Faisal Holding and a leading real estate developer in Qatar. Known
-            for its high-end residential and commercial properties.
-          </p>
-          <button
-            class="text-white !mt-4 !px-4 w-[200px] !py-2 border-1 border-[#9D8055] font-medium hover:bg-[#9D8055] transition-all duration-300 rounded text-xl text-left"
-          >
-            Explore
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Layout - Stacked Vertically -->
-      <div
-        id="mobile-layout"
-        class="lg:hidden absolute inset-0 z-20 flex flex-col !p-4 overflow-y-auto"
-      >
-        <!-- Active Item Indicator (Top) -->
-        <div
-          id="mobile-active-box"
-          class="flex items-center gap-3 !mb-4 !p-3 rounded-lg"
-          style="background-color: rgba(255, 255, 255, 0.2)"
-        >
-          <div id="mobile-active-indicator" class="w-4 h-4 flex-shrink-0"></div>
-          <p
-            id="mobile-active-text"
-            class="text-white text-sm font-medium tracking-wide"
-          >
-            REAL ESTATE
-          </p>
-        </div>
-
-        <!-- Main Content (Middle) -->
-        <div
-          class="flex-1 flex flex-col justify-center text-white !space-y-3 !mb-4 !p-4"
-        >
-          <h1
-            id="mobile-main-heading"
-            class="text-lg font-light underline tracking-wide underline-offset-8 transition-all duration-500"
-          >
-            Al Jazi Real Estate
-          </h1>
-          <p
-            id="mobile-main-description"
-            class="text-xs text-[#b1b1b1] font-light leading-relaxed"
-          >
-            Established in 1995, Al Jazi Real Estate is a subsidiary of Al
-            Faisal Holding and a leading real estate developer in Qatar. Known
-            for its high-end residential and commercial properties.
-          </p>
-          <button
-            class="text-white !mt-2 !px-3 w-[140px] !py-1.5 border border-[#9D8055] font-medium hover:bg-[#9D8055] transition-all duration-300 rounded text-sm text-left"
-          >
-            Explore
-          </button>
-        </div>
-
-        <!-- List Items (Bottom) -->
-        <div id="mobile-list-container" class="flex flex-col w-full">
-          <!-- Inactive verticals will be inserted here by JS -->
-        </div>
+        <!-- Mobile accordion panels will be dynamically inserted here -->
       </div>
     </section>
     <section
@@ -533,7 +429,7 @@
               Latest News
             </h2>
             <p
-              class="text-base sm:text-lg lg:text-xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
+              class="text-base sm:text-lg lg:text-2xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
             >
               Al Faisal Holding, is one of Qatar's leading private companies
               that played a significant role in the development of the Qatar
@@ -575,7 +471,7 @@
               Industry Leadership
             </h2>
             <p
-              class="text-base sm:text-lg lg:text-xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
+              class="text-base sm:text-lg lg:text-2xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
             >
               Leading the way in sustainable development and innovation across
               multiple sectors. Our commitment to excellence drives us to create
@@ -616,7 +512,7 @@
               Global Expansion
             </h2>
             <p
-              class="text-base sm:text-lg lg:text-xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
+              class="text-base sm:text-lg lg:text-2xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
             >
               Expanding our footprint across international markets with
               strategic partnerships and innovative solutions. Building bridges
@@ -657,7 +553,7 @@
               Sustainable Future
             </h2>
             <p
-              class="text-base sm:text-lg lg:text-xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
+              class="text-base sm:text-lg lg:text-2xl leading-relaxed max-w-lg !mb-6 lg:!mb-0 text-[#5B5B5B]"
             >
               Committed to building a sustainable future through environmentally
               responsible practices and green initiatives. Investing in
