@@ -131,23 +131,35 @@ const circleMask = createCircularMask();
 // Responsive breakpoint flag used for positioning
 let isMobile = window.innerWidth < 768;
 
-// Corner positions - alternating pattern
-const positionsSet1 = isMobile ? [
-  { x: -2.0, y: 1.5 },   // slightly in from top-left
-  { x: 2.0, y: -1.5 },   // slightly in from bottom-right
-] : [
-  { x: -2.5, y: 1.5 },   // top-left
-  { x: 3, y: -1.5 },     // bottom-right
-];
+// Base scale factors for circle masks
+const BASE_SCALE_DESKTOP = 1.2;
+const BASE_SCALE_MOBILE = 0.9; // slightly smaller circles on mobile
 
+// Helpers to compute responsive positions on demand
+function getPositionFor(indexYear, isFirstImage) {
+  const mobileSet1 = [
+    { x: -1.0, y: 2 },
+    { x: 1.0, y: -2 },
+  ];
+  const desktopSet1 = [
+    { x: -2.5, y: 1.5 },
+    { x: 3, y: -1.5 },
+  ];
+  const mobileSet2 = [
+    { x: 1.0, y: 2 },
+    { x: -1.0, y: -2 },
+  ];
+  const desktopSet2 = [
+    { x: 3, y: 1 },
+    { x: -3, y: -1.5 },
+  ];
 
-const positionsSet2 = isMobile ? [
-  { x: 2.0, y: 1 },      // slightly in from top-right
-  { x: -2.0, y: -1.5 },  // slightly in from bottom-left
-] : [
-  { x: 3, y: 1 },        // top-right
-  { x: -3, y: -1.5 },    // bottom-left
-];
+  const useSet1 = indexYear % 2 === 0;
+  const set = useSet1
+    ? (isMobile ? mobileSet1 : desktopSet1)
+    : (isMobile ? mobileSet2 : desktopSet2);
+  return isFirstImage ? set[0] : set[1];
+}
 
 const imagePlanes = [];
 const textureLoader = new THREE.TextureLoader();
@@ -220,14 +232,12 @@ timelineData.forEach((data, index) => {
   const geometry = sharedGeometry.clone();
   const plane = new THREE.Mesh(geometry, placeholderMaterial.clone());
 
-  // Determine which year this is (0-2) to alternate positioning
+  // Determine which year this is to alternate positioning
   const yearIndex = Math.floor(index / 2);
   const isFirstImageOfYear = data.imageIndex === 0;
-  
-  // Alternate between two position sets for each year
-  const positionSet = (yearIndex % 2 === 0) ? positionsSet1 : positionsSet2;
-  const pos = isFirstImageOfYear ? positionSet[0] : positionSet[1];
-  
+
+  // Initial placement (responsive)
+  const pos = getPositionFor(yearIndex, isFirstImageOfYear);
   plane.position.set(pos.x, pos.y, data.position);
   
   // Initially hide planes that are far away
@@ -342,6 +352,21 @@ gsap.to(camera.position, {
   },
 });
 
+// Rotate the outer circle SVG on scroll
+const outerCircleEl = document.querySelector('.outer-circle');
+if (outerCircleEl) {
+  gsap.to(outerCircleEl, {
+    rotation: 180, // slower: half a full spin across the section
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.timeline-section',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1.2, // smoother catch-up easing
+    },
+  });
+}
+
 // Mouse interaction
 let mouseX = 0, mouseY = 0;
 const raycaster = new THREE.Raycaster();
@@ -441,9 +466,10 @@ function animate() {
     // Skip expensive calculations for invisible planes
     if (!shouldBeVisible) return;
     
-    // Scale based on distance
-    const scale = Math.max(0.5, 1 - distance / 20);
-    obj.plane.scale.setScalar(scale * 1.2);
+  // Scale based on distance + platform base scale
+  const scale = Math.max(0.5, 1 - distance / 20);
+  const baseScale = isMobile ? BASE_SCALE_MOBILE : BASE_SCALE_DESKTOP;
+  obj.plane.scale.setScalar(scale * baseScale);
 
     // Smooth hover point transition
     obj.hoverPoint.lerp(obj.targetHoverPoint, 0.15);
@@ -554,13 +580,45 @@ function animate() {
 }
 animate();
 
+// Debounce helper to limit resize work
+function debounce(fn, wait = 150) {
+  let t;
+  return function (...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+// Re-apply layout when viewport changes
+function updateLayoutForViewport(animateMove = true) {
+  isMobile = window.innerWidth < 768;
+
+  imagePlanes.forEach((obj) => {
+    const yearIndex = years.indexOf(obj.data.year);
+    const isFirst = obj.data.imageIndex === 0;
+    const p = getPositionFor(yearIndex, isFirst);
+
+    if (animateMove && obj.plane.visible) {
+      // Smoothly animate positional change for visible items
+      gsap.to(obj.plane.position, { x: p.x, y: p.y, duration: 0.35, ease: 'power2.out' });
+    } else {
+      obj.plane.position.x = p.x;
+      obj.plane.position.y = p.y;
+    }
+  });
+}
+
+// Initial layout sync (in case initial isMobile differs across hydration)
+updateLayoutForViewport(false);
+
 // Resize
-window.addEventListener('resize', () => {
+window.addEventListener('resize', debounce(() => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  isMobile = window.innerWidth < 768;
-});
+  updateLayoutForViewport(true);
+  if (ScrollTrigger && ScrollTrigger.refresh) ScrollTrigger.refresh();
+}, 200));
 
 // Cleanup on page unload to prevent memory leaks
 window.addEventListener('beforeunload', () => {
